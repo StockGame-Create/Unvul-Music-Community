@@ -400,11 +400,8 @@
             }, 1000);
         })();
         // GitHub 설정 (미리 입력됨)
-        const GITHUB_CONFIG = {
-            username: 'StockGame-Create',
-            repo: 'Unvul-Music',
-            token: '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'
-        };
+// GitHub 설정 (토큰은 서버에서 관리)
+const API_URL = 'https://Unvul-Music-Community/api/upload';  // ← 배포 후 URL로 변경
 
         // 색상 미리보기 업데이트
         function updateColorPreview() {
@@ -549,28 +546,25 @@
             return await uploadToGitHub(filename, base64);
         }
 
-        async function uploadToGitHub(filename, base64Content) {
-            const url = `https://api.github.com/repos/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/contents/${filename}`;
-            
-            const response = await fetch(url, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${GITHUB_CONFIG.token}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    message: `Add community song: ${filename}`,
-                    content: base64Content,
-                })
-            });
+async function uploadToGitHub(filename, base64Content) {
+    const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            filename: filename,
+            content: base64Content
+        })
+    });
 
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(`GitHub API 오류: ${error.message}`);
-            }
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(`업로드 실패: ${error.error || error.message}`);
+    }
 
-            return await response.json();
-        }
+    return await response.json();
+}
 
         function fileToBase64(file) {
             return new Promise((resolve, reject) => {
