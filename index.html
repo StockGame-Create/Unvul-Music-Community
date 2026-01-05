@@ -67,7 +67,8 @@
         
         input[type="text"],
         input[type="file"],
-        input[type="color"] {
+        input[type="color"],
+        select {
             width: 100%;
             padding: 12px;
             background: rgba(255, 255, 255, 0.05);
@@ -86,6 +87,15 @@
             cursor: pointer;
         }
         
+        select {
+            cursor: pointer;
+        }
+        
+        select option {
+            background: #1a1a2e;
+            color: white;
+        }
+        
         .file-info {
             margin-top: 10px;
             font-size: 0.9em;
@@ -100,7 +110,7 @@
 
         .color-preview {
             width: 100%;
-            height: 200px;
+            height: 250px;
             border-radius: 15px;
             margin-top: 15px;
             border: 3px solid rgba(255, 255, 255, 0.3);
@@ -109,6 +119,7 @@
             justify-content: center;
             font-size: 3em;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
         }
         
         .btn {
@@ -158,8 +169,6 @@
             justify-content: center;
             font-weight: 600;
         }
-
-        
         
         .status {
             margin-top: 10px;
@@ -185,32 +194,129 @@
             display: none;
         }
 
-        code {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 10px;
-            display: block;
-            border-radius: 5px;
-            margin-top: 10px;
+        /* 스타일 버튼 */
+        .style-btn {
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
             font-size: 0.9em;
-            overflow-x: auto;
+            font-weight: 600;
+        }
+
+        .style-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .style-btn.active {
+            background: rgba(102, 126, 234, 0.3);
+            border-color: rgba(102, 126, 234, 0.8);
+            box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* 체크박스 스타일링 */
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        /* 랜덤 버튼 */
+        #randomizeBtn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        #randomizeBtn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* 돌아가기 버튼 */
+        #backBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        #backBtn:active {
+            transform: translateY(0);
+        }
+
+        /* 모바일 최적화 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            #backBtn {
+                display: block !important;
+                width: 100%;
+                padding: 15px 20px !important;
+                font-size: 1em !important;
+                box-sizing: border-box;
+            }
+            
+            .style-btn {
+                padding: 10px 12px;
+                font-size: 0.85em;
+            }
+            
+            .color-preview {
+                height: 200px;
+                font-size: 2.5em;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎵 커뮤니티 노래 업로드</h1>
+        <h1>🎵 UNVUL-MUSIC 커뮤니티 업로드</h1>
+
+        <!-- 돌아가기 버튼 -->
+        <div style="text-align: center; margin-bottom: 20px;">
+            <a href="https://unvul-music.vercel.app/" target="_blank" id="backBtn" style="
+                display: inline-block;
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                border: 2px solid rgba(102, 126, 234, 0.5);
+                color: white;
+                padding: 12px 30px;
+                border-radius: 10px;
+                text-decoration: none;
+                font-size: 1.1em;
+                font-weight: bold;
+                transition: all 0.3s;
+            ">
+                ← 메인 사이트로 돌아가기
+            </a>
+        </div>
         
         <div class="warning">
-            <h3>⚠️ 이 페이지는 관리자 전용입니다</h3>
-            <p>• 절대 이 페이지를 공개하지 마세요</p>
-            <p>• GitHub 토큰이 포함되어 있습니다</p>
+            <h3>⚠️ 이 페이지는 테스트 버전입니다</h3>
+            <p>• 개발자 도구 사용이 불가합니다</p>
         </div>
         
         <div class="info">
             <h3>📌 업로드 규칙</h3>
-            <p>• MP3 파일만 업로드 가능 (최대 25MB)</p>
+            <p>• MP3 파일만 업로드 가능 (최대 4.5MB)</p>
             <p>• 앨범 아트는 자동으로 생성됩니다</p>
             <p>• 업로드 후 자동으로 커뮤니티 탭에 표시됩니다</p>
+            <p>• 사이트에 맞지 않은 노래를 업로드할 경우, 사이트에서 정지당할 수 있습니다</p>
+            <p>• (UNVUL CO)</p>
         </div>
         
         <form id="uploadForm">
@@ -226,21 +332,95 @@
             </div>
             
             <div class="form-group">
-                <label>앨범 아트 색상 선택</label>
-                <div class="color-picker-group">
-                    <div>
-                        <label style="font-size: 0.9em;">시작 색상</label>
-                        <input type="color" id="color1" value="#ff6b6b">
-                    </div>
-                    <div>
-                        <label style="font-size: 0.9em;">끝 색상</label>
-                        <input type="color" id="color2" value="#4ecdc4">
+                <label>앨범 아트 커스텀</label>
+                
+                <!-- 스타일 선택 -->
+                <div style="margin-bottom: 20px;">
+                    <label style="font-size: 0.95em; margin-bottom: 10px;">디자인 스타일</label>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px;">
+                        <button type="button" class="style-btn active" data-style="gradient">
+                            🌈 그라데이션
+                        </button>
+                        <button type="button" class="style-btn" data-style="solid">
+                            🎨 단색
+                        </button>
+                        <button type="button" class="style-btn" data-style="pattern">
+                            🔷 패턴
+                        </button>
+                        <button type="button" class="style-btn" data-style="circle">
+                            ⭕ 원형
+                        </button>
                     </div>
                 </div>
+                
+                <!-- 색상 선택 -->
+                <div id="colorSection">
+                    <div class="color-picker-group">
+                        <div>
+                            <label style="font-size: 0.9em;">메인 색상</label>
+                            <input type="color" id="color1" value="#ff6b6b">
+                        </div>
+                        <div id="color2Container">
+                            <label style="font-size: 0.9em;">서브 색상</label>
+                            <input type="color" id="color2" value="#4ecdc4">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 텍스트 옵션 -->
+                <div style="margin-top: 20px;">
+                    <label style="font-size: 0.95em; margin-bottom: 10px;">텍스트 설정</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <label style="font-size: 0.85em; opacity: 0.8;">표시 텍스트</label>
+                            <select id="textType">
+                                <option value="first">첫 글자</option>
+                                <option value="icon">아이콘 (🎵)</option>
+                                <option value="custom">커스텀</option>
+                                <option value="none">없음</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 0.85em; opacity: 0.8;">텍스트 크기</label>
+                            <input type="range" id="textSize" min="50" max="250" value="200" style="width: 100%; margin-top: 10px;">
+                            <div style="text-align: center; font-size: 0.85em; margin-top: 5px;"><span id="textSizeValue">200</span>px</div>
+                        </div>
+                    </div>
+                    <div id="customTextContainer" style="display: none; margin-top: 15px;">
+                        <label style="font-size: 0.85em; opacity: 0.8;">커스텀 텍스트</label>
+                        <input type="text" id="customText" placeholder="예: ♪ 또는 UV" maxlength="3">
+                    </div>
+                </div>
+                
+                <!-- 효과 옵션 -->
+                <div style="margin-top: 20px;">
+                    <label style="font-size: 0.95em; margin-bottom: 10px;">추가 효과</label>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <label style="display: flex; align-items: center; gap: 8px; padding: 10px 15px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.2); border-radius: 8px; cursor: pointer;">
+                            <input type="checkbox" id="addGlow" checked>
+                            <span>★ 그림자</span>
+                        </label>
+                  <label style="display: flex; align-items: center; gap: 8px; padding: 10px 15px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.2); border-radius: 8px; cursor: pointer; opacity: 0.5; pointer-events: none;">
+    <input type="checkbox" id="addNoise" disabled>
+    <span> 노이즈 (테스트중)</span>
+</label>
+<label style="display: flex; align-items: center; gap: 8px; padding: 10px 15px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.2); border-radius: 8px; cursor: pointer; opacity: 0.5; pointer-events: none;">
+    <input type="checkbox" id="addBorder" disabled>
+    <span> 테두리 (테스트중)</span>
+</label>
+                    </div>
+                </div>
+                
+                <!-- 미리보기 -->
                 <div class="color-preview" id="colorPreview">🎵</div>
+                <div style="text-align: center; margin-top: 10px;">
+                    <button type="button" id="randomizeBtn">
+                        ? 랜덤 생성
+                    </button>
+                </div>
             </div>
             
-            <button type="submit" class="btn" id="uploadBtn">🚀 업로드 시작</button>
+            <button type="submit" class="btn" id="uploadBtn">▷ 업로드 시작</button>
         </form>
         
         <div class="progress" id="progressDiv">
@@ -262,13 +442,10 @@
     </div>
 
     <script>
-
-             // 개발자 도구 감지 및 차단
+        // 개발자 도구 감지 및 차단
         (function() {
             const devtoolsDetector = {
                 isOpen: false,
-                orientation: null,
-                
                 check: function() {
                     const widthThreshold = window.outerWidth - window.innerWidth > 160;
                     const heightThreshold = window.outerHeight - window.innerHeight > 160;
@@ -282,34 +459,13 @@
                         this.isOpen = false;
                     }
                 },
-                
                 handleDevtools: function() {
                     document.body.innerHTML = `
-                        <div style="
-                            position: fixed;
-                            top: 0;
-                            left: 0;
-                            width: 100%;
-                            height: 100%;
-                            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            z-index: 999999;
-                            font-family: 'Segoe UI', sans-serif;
-                        ">
-                            <div style="
-                                text-align: center;
-                                color: white;
-                                padding: 40px;
-                                background: rgba(0,0,0,0.3);
-                                border-radius: 20px;
-                                backdrop-filter: blur(10px);
-                            ">
+                        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); display: flex; align-items: center; justify-content: center; z-index: 999999; font-family: 'Segoe UI', sans-serif;">
+                            <div style="text-align: center; color: white; padding: 40px; background: rgba(0,0,0,0.3); border-radius: 20px; backdrop-filter: blur(10px);">
                                 <div style="font-size: 80px; margin-bottom: 20px;">⚠️</div>
                                 <h1 style="font-size: 2.5em; margin-bottom: 20px;">개발자 도구 감지</h1>
-                                <p style="font-size: 1.3em; margin-bottom: 15px;">보안을 위해 개발자 도구 사용이 제한됩니다.</p>
-                                <p style="font-size: 1.1em; opacity: 0.8;">개발자 도구를 닫으면 페이지가 자동으로 새로고침됩니다.</p>
+                                <p style="font-size: 1.3em;">보안을 위해 개발자 도구 사용이 제한됩니다.</p>
                             </div>
                         </div>
                     `;
@@ -317,263 +473,360 @@
                 }
             };
             
-            // 정기적으로 체크
             setInterval(() => devtoolsDetector.check(), 1000);
             
-            // 우클릭 방지
             document.addEventListener('contextmenu', e => {
                 e.preventDefault();
                 alert('⚠️ 우클릭이 비활성화되어 있습니다.');
                 return false;
             });
             
-            // 키보드 단축키 차단
             document.addEventListener('keydown', e => {
-                // F12
-                if (e.key === 'F12') {
+                if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key)) || (e.ctrlKey && e.key === 'u')) {
                     e.preventDefault();
                     alert('⚠️ 개발자 도구는 보안상 사용할 수 없습니다.');
-                    return false;
-                }
-                // Ctrl+Shift+I
-                if (e.ctrlKey && e.shiftKey && e.key === 'I') {
-                    e.preventDefault();
-                    alert('⚠️ 개발자 도구는 보안상 사용할 수 없습니다.');
-                    return false;
-                }
-                // Ctrl+Shift+J
-                if (e.ctrlKey && e.shiftKey && e.key === 'J') {
-                    e.preventDefault();
-                    alert('⚠️ 개발자 도구는 보안상 사용할 수 없습니다.');
-                    return false;
-                }
-                // Ctrl+Shift+C
-                if (e.ctrlKey && e.shiftKey && e.key === 'C') {
-                    e.preventDefault();
-                    alert('⚠️ 개발자 도구는 보안상 사용할 수 없습니다.');
-                    return false;
-                }
-                // Ctrl+U (소스보기)
-                if (e.ctrlKey && e.key === 'u') {
-                    e.preventDefault();
-                    alert('⚠️ 소스 보기는 보안상 사용할 수 없습니다.');
                     return false;
                 }
             });
-            
-            // 디버거 감지
-            setInterval(() => {
-                const before = new Date();
-                debugger;
-                const after = new Date();
-                if (after - before > 100) {
-                    document.body.innerHTML = `
-                        <div style="
-                            position: fixed;
-                            top: 0;
-                            left: 0;
-                            width: 100%;
-                            height: 100%;
-                            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            z-index: 999999;
-                            font-family: 'Segoe UI', sans-serif;
-                        ">
-                            <div style="
-                                text-align: center;
-                                color: white;
-                                padding: 40px;
-                                background: rgba(0,0,0,0.3);
-                                border-radius: 20px;
-                                backdrop-filter: blur(10px);
-                            ">
-                                <div style="font-size: 80px; margin-bottom: 20px;">🚫</div>
-                                <h1 style="font-size: 2.5em; margin-bottom: 20px;">디버거 감지</h1>
-                                <p style="font-size: 1.3em;">보안을 위해 접근이 차단되었습니다.</p>
-                            </div>
-                        </div>
-                    `;
-                    setTimeout(() => location.reload(), 2000);
-                }
-            }, 1000);
         })();
-        // GitHub 설정 (미리 입력됨)
-// GitHub 설정 (토큰은 서버에서 관리)
-const API_URL = 'https://unvulmus-community.vercel.app/api/upload';  // ← 배포 후 URL로 변경
 
-        // 색상 미리보기 업데이트
-        function updateColorPreview() {
-            const color1 = document.getElementById('color1').value;
-            const color2 = document.getElementById('color2').value;
-            const preview = document.getElementById('colorPreview');
-            preview.style.background = `linear-gradient(135deg, ${color1}, ${color2})`;
-        }
+        const API_URL = 'https://unvulmus-community.vercel.app/api/upload';
+        let currentStyle = 'gradient';
 
+        // 스타일 버튼 이벤트
+        document.querySelectorAll('.style-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentStyle = this.dataset.style;
+                
+                const color2Container = document.getElementById('color2Container');
+                color2Container.style.display = currentStyle === 'solid' ? 'none' : 'block';
+                
+                updateColorPreview();
+            });
+        });
+
+        // 텍스트 타입 변경
+        document.getElementById('textType').addEventListener('change', function() {
+            const customContainer = document.getElementById('customTextContainer');
+            customContainer.style.display = this.value === 'custom' ? 'block' : 'none';
+            updateColorPreview();
+        });
+
+        // 텍스트 크기 슬라이더
+        document.getElementById('textSize').addEventListener('input', function() {
+            document.getElementById('textSizeValue').textContent = this.value;
+            updateColorPreview();
+        });
+
+        // 효과 체크박스
+        ['addGlow', 'addNoise', 'addBorder'].forEach(id => {
+            document.getElementById(id).addEventListener('change', updateColorPreview);
+        });
+
+        // 커스텀 텍스트 입력
+        document.getElementById('customText').addEventListener('input', updateColorPreview);
+
+        // 색상 변경
         document.getElementById('color1').addEventListener('input', updateColorPreview);
         document.getElementById('color2').addEventListener('input', updateColorPreview);
-        updateColorPreview();
+
+        // 랜덤 생성
+        document.getElementById('randomizeBtn').addEventListener('click', () => {
+            const randomColor = () => '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+            document.getElementById('color1').value = randomColor();
+            document.getElementById('color2').value = randomColor();
+            
+            const styles = ['gradient', 'solid', 'pattern', 'circle'];
+            const randomStyleIndex = Math.floor(Math.random() * styles.length);
+            document.querySelectorAll('.style-btn')[randomStyleIndex].click();
+            
+            const randomSize = Math.floor(Math.random() * 150) + 100;
+            document.getElementById('textSize').value = randomSize;
+            document.getElementById('textSizeValue').textContent = randomSize;
+            
+            updateColorPreview();
+        });
+
+        // 미리보기 업데이트
+        function updateColorPreview() {
+            const preview = document.getElementById('colorPreview');
+            const color1 = document.getElementById('color1').value;
+            const color2 = document.getElementById('color2').value;
+            const textType = document.getElementById('textType').value;
+            const customText = document.getElementById('customText').value;
+            const songTitle = document.getElementById('songTitle').value || 'S';
+            
+            // 배경 스타일
+            switch(currentStyle) {
+                case 'gradient':
+                    preview.style.background = `linear-gradient(135deg, ${color1}, ${color2})`;
+                    break;
+                case 'solid':
+                    preview.style.background = color1;
+                    break;
+                case 'pattern':
+                    preview.style.background = `repeating-linear-gradient(45deg, ${color1}, ${color1} 20px, ${color2} 20px, ${color2} 40px)`;
+                    break;
+                case 'circle':
+                    preview.style.background = `radial-gradient(circle, ${color1}, ${color2})`;
+                    break;
+            }
+            
+            // 텍스트
+            let displayText = '';
+            switch(textType) {
+                case 'first':
+                    displayText = songTitle.charAt(0).toUpperCase();
+                    break;
+                case 'icon':
+                    displayText = '🎵';
+                    break;
+                case 'custom':
+                    displayText = customText || '♪';
+                    break;
+            }
+            preview.textContent = displayText;
+            
+            // 효과
+            const addGlow = document.getElementById('addGlow').checked;
+            const addBorder = document.getElementById('addBorder').checked;
+            
+            preview.style.textShadow = addGlow ? '0 0 30px rgba(0,0,0,0.5), 0 0 60px rgba(0,0,0,0.3)' : 'none';
+            preview.style.border = addBorder ? '5px solid rgba(255, 255, 255, 0.3)' : '3px solid rgba(255, 255, 255, 0.3)';
+        }
 
         // 파일 정보 표시
+    // 파일 정보 표시
         document.getElementById('mp3File').addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
                 const sizeMB = (file.size / 1024 / 1024).toFixed(2);
                 document.getElementById('mp3Info').textContent = `📁 ${file.name} (${sizeMB}MB)`;
                 
-                // 파일 크기 체크
-                if (file.size > 25 * 1024 * 1024) {
-                    alert('⚠️ 파일이 너무 큽니다! 25MB 이하만 가능합니다.');
+                if (file.size > 4.4 * 1024 * 1024) {
+                    alert('⚠️ 파일이 너무 큽니다!\n4.5MB 이하 파일을 선택해주세요.\n(약 4분까지 가능합니다)');
                     e.target.value = '';
                     document.getElementById('mp3Info').textContent = '';
                 }
             }
         });
 
-        // 앨범 아트 생성 함수
+        // 개선된 앨범 아트 생성
         async function generateAlbumArt(color1, color2, title) {
             return new Promise((resolve) => {
                 const canvas = document.createElement('canvas');
-                canvas.width = 400;
-                canvas.height = 400;
+                canvas.width = 500;
+                canvas.height = 500;
                 const ctx = canvas.getContext('2d');
                 
-                // 그라데이션 배경
-                const gradient = ctx.createLinearGradient(0, 0, 400, 400);
-                gradient.addColorStop(0, color1);
-                gradient.addColorStop(1, color2);
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0, 0, 400, 400);
+                const textType = document.getElementById('textType').value;
+                const customText = document.getElementById('customText').value;
+                const textSize = parseInt(document.getElementById('textSize').value);
+                const addGlow = document.getElementById('addGlow').checked;
+                const addNoise = document.getElementById('addNoise').checked;
+                const addBorder = document.getElementById('addBorder').checked;
                 
-                // 무늬 추가 (랜덤 원들)
-                for (let i = 0; i < 15; i++) {
-                    ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.15})`;
-                    const x = Math.random() * 400;
-                    const y = Math.random() * 400;
-                    const r = Math.random() * 80 + 40;
-                    ctx.beginPath();
-                    ctx.arc(x, y, r, 0, Math.PI * 2);
-                    ctx.fill();
+                // 배경 그리기
+                switch(currentStyle) {
+                    case 'gradient':
+                        const gradient = ctx.createLinearGradient(0, 0, 500, 500);
+                        gradient.addColorStop(0, color1);
+                        gradient.addColorStop(1, color2);
+                        ctx.fillStyle = gradient;
+                        ctx.fillRect(0, 0, 500, 500);
+                        break;
+                    case 'solid':
+                        ctx.fillStyle = color1;
+                        ctx.fillRect(0, 0, 500, 500);
+                        break;
+                    case 'pattern':
+                        const patternCanvas = document.createElement('canvas');
+                        patternCanvas.width = 40;
+                        patternCanvas.height = 40;
+                        const pCtx = patternCanvas.getContext('2d');
+                        pCtx.fillStyle = color1;
+                        pCtx.fillRect(0, 0, 40, 40);
+                        pCtx.fillStyle = color2;
+                        pCtx.fillRect(0, 0, 20, 20);
+                        pCtx.fillRect(20, 20, 20, 20);
+                        const pattern = ctx.createPattern(patternCanvas, 'repeat');
+                        ctx.fillStyle = pattern;
+                        ctx.fillRect(0, 0, 500, 500);
+                        break;
+                    case 'circle':
+                        const radialGradient = ctx.createRadialGradient(250, 250, 0, 250, 250, 350);
+                        radialGradient.addColorStop(0, color1);
+                        radialGradient.addColorStop(1, color2);
+                        ctx.fillStyle = radialGradient;
+                        ctx.fillRect(0, 0, 500, 500);
+                        break;
                 }
                 
-                // 텍스트 (노래 제목 첫 글자)
-                const firstLetter = title.charAt(0).toUpperCase();
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-                ctx.font = 'bold 200px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
-                ctx.shadowBlur = 20;
-                ctx.fillText(firstLetter, 200, 200);
+                // 장식 원들
+                if (currentStyle !== 'pattern') {
+                    for (let i = 0; i < 12; i++) {
+                        ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.1})`;
+                        const x = Math.random() * 500;
+                        const y = Math.random() * 500;
+                        const r = Math.random() * 100 + 50;
+                        ctx.beginPath();
+                        ctx.arc(x, y, r, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
                 
-                // Base64로 변환
-                canvas.toBlob((blob) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => resolve(reader.result.split(',')[1]);
-                    reader.readAsDataURL(blob);
-                }, 'image/jpeg', 0.9);
-            });
-        }
-
-        // 폼 제출
-        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const title = document.getElementById('songTitle').value.trim();
-            const mp3File = document.getElementById('mp3File').files[0];
-            const color1 = document.getElementById('color1').value;
-            const color2 = document.getElementById('color2').value;
-
-            // UI 업데이트
-            document.getElementById('uploadBtn').disabled = true;
-            document.getElementById('progressDiv').style.display = 'block';
-            document.getElementById('successDiv').style.display = 'none';
-            document.getElementById('errorDiv').style.display = 'none';
-
-            try {
-                // 1. 앨범 아트 생성
-                updateProgress(20, '앨범 아트 생성 중...');
-                const albumArtBase64 = await generateAlbumArt(color1, color2, title);
+                // 노이즈 효과
+                if (addNoise) {
+                    const imageData = ctx.getImageData(0, 0, 500, 500);
+                    for (let i = 0; i < imageData.data.length; i += 4) {
+                        const noise = Math.random() * 30 - 15;
+                        imageData.data[i] += noise;
+                        imageData.data[i+1] += noise;
+                        imageData.data[i+2] += noise;
+                    }
+                    ctx.putImageData(imageData, 0, 0);
+                }
                 
-                // 2. MP3 파일 업로드
-                updateProgress(40, 'MP3 파일 업로드 중...');
-                const mp3Filename = `community/${title}.mp3`;
-                await uploadFile(mp3File, mp3Filename);
-
-                // 3. 앨범 아트 업로드
-                updateProgress(70, '앨범 아트 업로드 중...');
-                const iconFilename = `community/${title}.jpg`;
-                await uploadBase64(albumArtBase64, iconFilename);
-
-                // 4. 완료
-                updateProgress(100, '완료!');
-                document.getElementById('successDiv').style.display = 'block';
-                document.getElementById('successMessage').innerHTML = `
-                    <strong>${title}</strong>가 커뮤니티에 추가되었습니다!<br><br>
-                    ✅ 자동으로 커뮤니티 탭에 표시됩니다<br>
-                    ✅ 추가 작업이 필요하지 않습니다
-                `;
-
-                // 폼 리셋
-                setTimeout(() => {
-                    document.getElementById('uploadForm').reset();
-                    document.getElementById('mp3Info').textContent = '';
-                    updateColorPreview();
-                }, 3000);
-
-            } catch (error) {
-                console.error('Upload error:', error);
-                document.getElementById('errorDiv').style.display = 'block';
-                document.getElementById('errorMessage').textContent = error.message;
-            } finally {
-                document.getElementById('uploadBtn').disabled = false;
+                // 텍스트
+                if (textType !== 'none') {
+                    let displayText = '';
+                    switch(textType) {
+                        case 'first':
+                            displayText = title.charAt(0).toUpperCase();
+                            break;
+                        case 'icon':
+                            displayText = '🎵';
+                            break;
+                        case 'custom':
+                            displayText = customText || '♪';
+                            break;
+                    }
+                    
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+                    ctx.font = `bold ${textSize}px Arial`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    
+                    if (addGlow) {
+                        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+                        ctx.shadowBlur = 30;
+                    }
+                    
+                    ctx.fillText(displayText, 250, 250);
+                }
+                
+                // 테두리
+                if (addBorder) {
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+                ctx.lineWidth = 10;
+                ctx.strokeRect(5, 5, 490, 490);
             }
+            
+            canvas.toBlob((blob) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result.split(',')[1]);
+                reader.readAsDataURL(blob);
+            }, 'image/jpeg', 0.95);
         });
-
-        function updateProgress(percent, message) {
-            document.getElementById('progressFill').style.width = percent + '%';
-            document.getElementById('progressFill').textContent = percent + '%';
-            document.getElementById('statusText').textContent = message;
-        }
-
-        async function uploadFile(file, filename) {
-            const base64 = await fileToBase64(file);
-            return await uploadToGitHub(filename, base64.split(',')[1]);
-        }
-
-        async function uploadBase64(base64, filename) {
-            return await uploadToGitHub(filename, base64);
-        }
-
-async function uploadToGitHub(filename, base64Content) {
-    const response = await fetch(API_URL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            filename: filename,
-            content: base64Content
-        })
-    });
-
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(`업로드 실패: ${error.error || error.message}`);
     }
 
-    return await response.json();
-}
+    // 폼 제출
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const title = document.getElementById('songTitle').value.trim();
+        const mp3File = document.getElementById('mp3File').files[0];
+        const color1 = document.getElementById('color1').value;
+        const color2 = document.getElementById('color2').value;
 
-        function fileToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = reject;
-                reader.readAsDataURL(file);
-            });
+        document.getElementById('uploadBtn').disabled = true;
+        document.getElementById('progressDiv').style.display = 'block';
+        document.getElementById('successDiv').style.display = 'none';
+        document.getElementById('errorDiv').style.display = 'none';
+
+        try {
+            updateProgress(20, '앨범 아트 생성 중...');
+            const albumArtBase64 = await generateAlbumArt(color1, color2, title);
+            
+            updateProgress(40, 'MP3 파일 업로드 중...');
+            const mp3Filename = `community/${title}.mp3`;
+            await uploadFile(mp3File, mp3Filename);
+
+            updateProgress(70, '앨범 아트 업로드 중...');
+            const iconFilename = `community/${title}.jpg`;
+            await uploadBase64(albumArtBase64, iconFilename);
+
+            updateProgress(100, '완료!');
+            document.getElementById('successDiv').style.display = 'block';
+            document.getElementById('successMessage').innerHTML = `
+                <strong>${title}</strong>가 커뮤니티에 추가되었습니다!<br><br>
+                ✅ 자동으로 커뮤니티 탭에 표시됩니다<br>
+                ✅ 추가 작업이 필요하지 않습니다
+            `;
+
+            setTimeout(() => {
+                document.getElementById('uploadForm').reset();
+                document.getElementById('mp3Info').textContent = '';
+                updateColorPreview();
+            }, 3000);
+
+        } catch (error) {
+            console.error('Upload error:', error);
+            document.getElementById('errorDiv').style.display = 'block';
+            document.getElementById('errorMessage').textContent = error.message;
+        } finally {
+            document.getElementById('uploadBtn').disabled = false;
         }
-    </script>
+    });
+
+    function updateProgress(percent, message) {
+        document.getElementById('progressFill').style.width = percent + '%';
+        document.getElementById('progressFill').textContent = percent + '%';
+        document.getElementById('statusText').textContent = message;
+    }
+
+    async function uploadFile(file, filename) {
+        const base64 = await fileToBase64(file);
+        return await uploadToGitHub(filename, base64.split(',')[1]);
+    }
+
+    async function uploadBase64(base64, filename) {
+        return await uploadToGitHub(filename, base64);
+    }
+
+    async function uploadToGitHub(filename, base64Content) {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                filename: filename,
+                content: base64Content
+            })
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(`업로드 실패: ${error.error || error.message}`);
+        }
+
+        return await response.json();
+    }
+
+    function fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // 초기화
+    updateColorPreview();
+</script>
 </body>
 </html>
