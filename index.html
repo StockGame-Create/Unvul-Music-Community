@@ -829,7 +829,6 @@ await uploadBase64(mp3Base64Content, mp3Filename);
         document.getElementById('progressFill').textContent = percent + '%';
         document.getElementById('statusText').textContent = message;
     }
-
 async function downloadYoutubeAudio(youtubeUrl) {
     try {
         // 유튜브 비디오 ID 추출
@@ -845,20 +844,18 @@ async function downloadYoutubeAudio(youtubeUrl) {
             throw new Error('비디오 ID를 찾을 수 없습니다');
         }
 
-        // AllOrigins CORS 프록시 사용
-        const proxyUrl = 'https://api.allorigins.win/raw?url=';
-        const apiUrl = `https://youtube-mp36.p.rapidapi.com/dl?id=${videoId}`;
+        // yt-api.org API 사용
+        const apiUrl = `https://yt-api.org/api/json/mp3/${videoId}`;
         
-        // 공개 무료 API 사용
-        const response = await fetch(`${proxyUrl}${encodeURIComponent(apiUrl)}`);
+        const response = await fetch(apiUrl);
         const data = await response.json();
 
-        if (!data.link) {
+        if (!data || !data.url) {
             throw new Error('다운로드 링크를 가져올 수 없습니다');
         }
 
         // MP3 다운로드
-        const audioResponse = await fetch(`${proxyUrl}${encodeURIComponent(data.link)}`);
+        const audioResponse = await fetch(data.url);
         const audioBlob = await audioResponse.blob();
 
         // 크기 체크
