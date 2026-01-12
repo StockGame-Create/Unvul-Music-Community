@@ -1,20 +1,5 @@
 // api/youtube.js
-import ytdl from 'ytdl-core';
-import ffmpeg from 'fluent-ffmpeg';
-import { Readable } from 'stream';
-
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '10mb',
-    },
-    responseLimit: '10mb',
-  },
-  maxDuration: 60, // 최대 60초 실행
-};
-
 export default async function handler(req, res) {
-  // CORS 설정
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -34,59 +19,71 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: '유튜브 URL이 필요합니다' });
     }
 
-    // 유튜브 URL 검증
-    if (!ytdl.validateURL(url)) {
+    // 유튜브 비디오 ID 추출
+    let videoId;
+    try {
+      const urlObj = new URL(url);
+      if (urlObj.hostname.includes('youtu.be')) {
+        videoId = urlObj.pathname.slice(1);
+      } else if (urlObj.hostname.includes('youtube.com')) {
+        videoId = urlObj.searchParams.get('v');
+      }
+    } catch (e) {
       return res.status(400).json({ error: '올바른 유튜브 URL이 아닙니다' });
     }
 
-    // 비디오 정보 가져오기
-    const info = await ytdl.getInfo(url);
-    const duration = parseInt(info.videoDetails.lengthSeconds);
-
-    // 4분 이상이면 거부 (4.5MB 제한 고려)
-    if (duration > 240) {
-      return res.status(400).json({ 
-        error: '영상이 너무 깁니다 (최대 4분)',
-        duration: duration 
-      });
+    if (!videoId) {
+      return res.status(400).json({ error: '비디오 ID를 찾을 수 없습니다' });
     }
 
-    // 오디오 스트림 가져오기
-    const audioStream = ytdl(url, {
-      quality: 'lowestaudio',
-      filter: 'audioonly',
+    // 무료 공개 API 사용 (cobalt.tools API)
+    const cobaltResponse = await fetch('https://api.cobalt.tools/api/json', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        url: url,
+        vCodec: 'h264',
+        vQuality: '720',
+        aFormat: 'mp3',
+        isAudioOnly: true
+      })
     });
 
-    // 버퍼에 저장
-    const chunks = [];
+    const cobaltData = await cobaltResponse.json();
+
+    if (cobaltData.status !== 'stream' && cobaltData.status !== 'redirect') {
+      throw new Error('다운로드 링크를 가져올 수 없습니다');
+    }
+
+    const audioUrl = cobaltData.url;
+
+    // MP3 다운로드
+    const audioResponse = await fetch(audioUrl);
     
-    await new Promise((resolve, reject) => {
-      audioStream.on('data', (chunk) => chunks.push(chunk));
-      audioStream.on('end', resolve);
-      audioStream.on('error', reject);
-    });
+    if (!audioResponse.ok) {
+      throw new Error('오디오 다운로드 실패');
+    }
 
-    const audioBuffer = Buffer.concat(chunks);
-
-    // MP3로 변환 및 압축 (64kbps - 4분 = 약 2MB)
-    const mp3Buffer = await convertToMP3(audioBuffer, 64);
-
-    // 파일 크기 체크
-    const sizeMB = mp3Buffer.length / (1024 * 1024);
+    const audioBuffer = await audioResponse.arrayBuffer();
+    
+    // 크기 체크 (4.5MB)
+    const sizeMB = audioBuffer.byteLength / (1024 * 1024);
     if (sizeMB > 4.4) {
       return res.status(400).json({ 
-        error: '변환된 파일이 너무 큽니다',
+        error: '파일이 너무 큽니다. 더 짧은 영상을 선택해주세요.',
         size: sizeMB.toFixed(2) + 'MB'
       });
     }
 
-    // Base64로 인코딩
-    const audioBase64 = mp3Buffer.toString('base64');
+    // Base64 인코딩
+    const audioBase64 = Buffer.from(audioBuffer).toString('base64');
 
     return res.status(200).json({ 
       audioBase64,
-      size: sizeMB.toFixed(2),
-      duration
+      size: sizeMB.toFixed(2)
     });
 
   } catch (error) {
@@ -96,24 +93,4 @@ export default async function handler(req, res) {
       message: error.message 
     });
   }
-}
-
-// MP3 변환 함수
-function convertToMP3(audioBuffer, bitrate = 64) {
-  return new Promise((resolve, reject) => {
-    const bufferStream = new Readable();
-    bufferStream.push(audioBuffer);
-    bufferStream.push(null);
-
-    const chunks = [];
-
-    ffmpeg(bufferStream)
-      .audioCodec('libmp3lame')
-      .audioBitrate(bitrate)
-      .format('mp3')
-      .on('error', reject)
-      .on('end', () => resolve(Buffer.concat(chunks)))
-      .pipe()
-      .on('data', (chunk) => chunks.push(chunk));
-  });
 }
