@@ -325,11 +325,29 @@
                 <input type="text" id="songTitle" required placeholder="예: MY AWESOME SONG">
             </div>
             
-            <div class="form-group">
-                <label>MP3 파일 *</label>
-                <input type="file" id="mp3File" accept=".mp3" required>
-                <div class="file-info" id="mp3Info"></div>
-            </div>
+  <div class="form-group">
+    <label>업로드 방식 선택</label>
+    <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+        <button type="button" class="style-btn active" id="uploadMethodFile">
+            📁 MP3 파일
+        </button>
+        <button type="button" class="style-btn" id="uploadMethodYoutube">
+            🎬 유튜브 링크
+        </button>
+    </div>
+</div>
+
+<div class="form-group" id="fileUploadSection">
+    <label>MP3 파일 *</label>
+    <input type="file" id="mp3File" accept=".mp3">
+    <div class="file-info" id="mp3Info"></div>
+</div>
+
+<div class="form-group" id="youtubeUploadSection" style="display: none;">
+    <label>유튜브 링크 *</label>
+    <input type="url" id="youtubeUrl" placeholder="https://www.youtube.com/watch?v=...">
+    <div class="file-info" id="youtubeInfo"></div>
+</div>
             
             <div class="form-group">
                 <label>앨범 아트 커스텀</label>
@@ -442,6 +460,48 @@
     </div>
 
     <script>
+
+ 
+let uploadMethod = 'file'; // 추가
+
+// 업로드 방식 전환
+document.getElementById('uploadMethodFile').addEventListener('click', function() {
+    uploadMethod = 'file';
+    document.getElementById('uploadMethodFile').classList.add('active');
+    document.getElementById('uploadMethodYoutube').classList.remove('active');
+    document.getElementById('fileUploadSection').style.display = 'block';
+    document.getElementById('youtubeUploadSection').style.display = 'none';
+    document.getElementById('mp3File').required = true;
+    document.getElementById('youtubeUrl').required = false;
+});
+
+document.getElementById('uploadMethodYoutube').addEventListener('click', function() {
+    uploadMethod = 'youtube';
+    document.getElementById('uploadMethodYoutube').classList.add('active');
+    document.getElementById('uploadMethodFile').classList.remove('active');
+    document.getElementById('fileUploadSection').style.display = 'none';
+    document.getElementById('youtubeUploadSection').style.display = 'block';
+    document.getElementById('mp3File').required = false;
+    document.getElementById('youtubeUrl').required = true;
+});
+
+// 유튜브 링크 검증
+document.getElementById('youtubeUrl').addEventListener('input', (e) => {
+    const url = e.target.value;
+    const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+    
+    if (url && youtubeRegex.test(url)) {
+        document.getElementById('youtubeInfo').innerHTML = '✅ 유효한 유튜브 링크';
+        document.getElementById('youtubeInfo').style.color = 'rgba(100, 255, 100, 0.8)';
+    } else if (url) {
+        document.getElementById('youtubeInfo').innerHTML = '⚠️ 올바른 유튜브 링크를 입력하세요';
+        document.getElementById('youtubeInfo').style.color = 'rgba(255, 100, 100, 0.8)';
+    } else {
+        document.getElementById('youtubeInfo').innerHTML = '';
+    }
+});
+
+
         // 개발자 도구 감지 및 차단
         (function() {
             const devtoolsDetector = {
@@ -736,8 +796,35 @@
     document.getElementById('uploadForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        const title = document.getElementById('songTitle').value.trim();
-        const mp3File = document.getElementById('mp3File').files[0];
+const title = document.getElementById('songTitle').value.trim();
+
+// 업로드 방식에 따라 분기
+let mp3Base64Content;
+
+if (uploadMethod === 'file') {
+    const mp3File = document.getElementById('mp3File').files[0];
+    if (!mp3File) {
+        alert('⚠️ MP3 파일을 선택해주세요!');
+        document.getElementById('uploadBtn').disabled = false;
+        return;
+    }
+    updateProgress(40, 'MP3 파일 처리 중...');
+    mp3Base64Content = await fileToBase64(mp3File);
+    mp3Base64Content = mp3Base64Content.split(',')[1];
+    
+} else {
+    const youtubeUrl = document.getElementById('youtubeUrl').value.trim();
+    const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+    
+    if (!youtubeRegex.test(youtubeUrl)) {
+        alert('⚠️ 올바른 유튜브 링크를 입력해주세요!');
+        document.getElementById('uploadBtn').disabled = false;
+        return;
+    }
+    
+    updateProgress(40, '유튜브에서 음악 다운로드 중...');
+    mp3Base64Content = await downloadYoutubeAudio(youtubeUrl);
+}
         const color1 = document.getElementById('color1').value;
         const color2 = document.getElementById('color2').value;
 
@@ -750,9 +837,9 @@
             updateProgress(20, '앨범 아트 생성 중...');
             const albumArtBase64 = await generateAlbumArt(color1, color2, title);
             
-            updateProgress(40, 'MP3 파일 업로드 중...');
-            const mp3Filename = `community/${title}.mp3`;
-            await uploadFile(mp3File, mp3Filename);
+      updateProgress(60, 'MP3 파일 업로드 중...');
+const mp3Filename = `community/${title}.mp3`;
+await uploadBase64(mp3Base64Content, mp3Filename);
 
             updateProgress(70, '앨범 아트 업로드 중...');
             const iconFilename = `community/${title}.jpg`;
@@ -786,6 +873,24 @@
         document.getElementById('progressFill').textContent = percent + '%';
         document.getElementById('statusText').textContent = message;
     }
+
+    async function downloadYoutubeAudio(youtubeUrl) {
+    const response = await fetch(`${API_URL}/youtube`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: youtubeUrl })
+    });
+
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(`유튜브 다운로드 실패: ${error.error || error.message}`);
+    }
+
+    const data = await response.json();
+    return data.audioBase64;
+}
 
     async function uploadFile(file, filename) {
         const base64 = await fileToBase64(file);
