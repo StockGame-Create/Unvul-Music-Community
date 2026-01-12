@@ -503,52 +503,7 @@ document.getElementById('youtubeUrl').addEventListener('input', (e) => {
 
 
         // 개발자 도구 감지 및 차단
-        (function() {
-            const devtoolsDetector = {
-                isOpen: false,
-                check: function() {
-                    const widthThreshold = window.outerWidth - window.innerWidth > 160;
-                    const heightThreshold = window.outerHeight - window.innerHeight > 160;
-                    
-                    if (widthThreshold || heightThreshold) {
-                        if (!this.isOpen) {
-                            this.isOpen = true;
-                            this.handleDevtools();
-                        }
-                    } else {
-                        this.isOpen = false;
-                    }
-                },
-                handleDevtools: function() {
-                    document.body.innerHTML = `
-                        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); display: flex; align-items: center; justify-content: center; z-index: 999999; font-family: 'Segoe UI', sans-serif;">
-                            <div style="text-align: center; color: white; padding: 40px; background: rgba(0,0,0,0.3); border-radius: 20px; backdrop-filter: blur(10px);">
-                                <div style="font-size: 80px; margin-bottom: 20px;">⚠️</div>
-                                <h1 style="font-size: 2.5em; margin-bottom: 20px;">개발자 도구 감지</h1>
-                                <p style="font-size: 1.3em;">보안을 위해 개발자 도구 사용이 제한됩니다.</p>
-                            </div>
-                        </div>
-                    `;
-                    setTimeout(() => location.reload(), 3000);
-                }
-            };
-            
-            setInterval(() => devtoolsDetector.check(), 1000);
-            
-            document.addEventListener('contextmenu', e => {
-                e.preventDefault();
-                alert('⚠️ 우클릭이 비활성화되어 있습니다.');
-                return false;
-            });
-            
-            document.addEventListener('keydown', e => {
-                if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key)) || (e.ctrlKey && e.key === 'u')) {
-                    e.preventDefault();
-                    alert('⚠️ 개발자 도구는 보안상 사용할 수 없습니다.');
-                    return false;
-                }
-            });
-        })();
+      
 
         const API_URL = 'https://unvulmus-community.vercel.app/api/upload';
         let currentStyle = 'gradient';
