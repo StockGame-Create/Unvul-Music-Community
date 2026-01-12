@@ -1,8 +1,6 @@
 {
   "name": "unvul-music-upload",
-  "version": "1.0.0"
-}
-{
+  "version": "1.0.0",
   "dependencies": {
     "ytdl-core": "^4.11.5",
     "fluent-ffmpeg": "^2.1.2",
