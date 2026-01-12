@@ -505,7 +505,8 @@ document.getElementById('youtubeUrl').addEventListener('input', (e) => {
         // 개발자 도구 감지 및 차단
       
 
-        const API_URL = 'https://unvulmus-community.vercel.app/api/upload';
+       const API_URL = 'https://unvulmus-community.vercel.app/api/upload';
+const YOUTUBE_API_URL = 'https://unvulmus-community.vercel.app/api/youtube'; 
         let currentStyle = 'gradient';
 
         // 스타일 버튼 이벤트
@@ -829,8 +830,8 @@ await uploadBase64(mp3Base64Content, mp3Filename);
         document.getElementById('statusText').textContent = message;
     }
 
-    async function downloadYoutubeAudio(youtubeUrl) {
-    const response = await fetch(`${API_URL}/youtube`, {
+async function downloadYoutubeAudio(youtubeUrl) {
+    const response = await fetch(YOUTUBE_API_URL, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
