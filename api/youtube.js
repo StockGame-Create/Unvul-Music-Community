@@ -1,8 +1,5 @@
 // api/youtube.js
-import fetch from 'node-fetch';
-
 export default async function handler(req, res) {
-  // CORS 헤더 설정
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -22,40 +19,52 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: '비디오 ID가 필요합니다' });
     }
 
-    // yt-api.org API 호출
-    const apiUrl = `https://yt-api.org/api/json/mp3/${videoId}`;
-    const response = await fetch(apiUrl);
-    const data = await response.json();
+    // ytdl 사용 (vercel에 ytdl-core 설치 필요)
+    const ytdl = require('ytdl-core');
+    
+    const info = await ytdl.getInfo(videoId);
+    const format = ytdl.chooseFormat(info.formats, { 
+      quality: 'lowestaudio',
+      filter: 'audioonly'
+    });
 
-    if (!data || !data.url) {
-      return res.status(400).json({ error: '다운로드 링크를 가져올 수 없습니다' });
+    if (!format) {
+      return res.status(400).json({ error: '오디오 형식을 찾을 수 없습니다' });
     }
 
-    // MP3 다운로드
-    const audioResponse = await fetch(data.url);
-    const audioBuffer = await audioResponse.arrayBuffer();
+    // 스트림으로 다운로드
+    const stream = ytdl(videoId, { format: format });
+    const chunks = [];
 
-    // 크기 체크 (4.4MB 제한)
-    const sizeMB = audioBuffer.byteLength / (1024 * 1024);
+    stream.on('data', (chunk) => chunks.push(chunk));
+    
+    await new Promise((resolve, reject) => {
+      stream.on('end', resolve);
+      stream.on('error', reject);
+    });
+
+    const buffer = Buffer.concat(chunks);
+    const sizeMB = buffer.length / (1024 * 1024);
+
     if (sizeMB > 4.4) {
       return res.status(400).json({ 
-        error: `파일이 너무 큽니다 (${sizeMB.toFixed(2)}MB)` 
+        error: `파일이 너무 큽니다 (${sizeMB.toFixed(2)}MB). 4분 이하 영상을 선택해주세요.` 
       });
     }
 
-    // Base64 변환
-    const base64 = Buffer.from(audioBuffer).toString('base64');
+    const base64 = buffer.toString('base64');
 
     return res.status(200).json({
       success: true,
       base64: base64,
-      size: sizeMB.toFixed(2)
+      size: sizeMB.toFixed(2),
+      title: info.videoDetails.title
     });
 
   } catch (error) {
-    console.error('YouTube download error:', error);
+    console.error('YouTube Error:', error);
     return res.status(500).json({ 
-      error: '다운로드 중 오류가 발생했습니다: ' + error.message 
+      error: '다운로드 실패: ' + error.message 
     });
   }
 }
