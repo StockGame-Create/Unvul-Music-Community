@@ -1,16 +1,28 @@
 {
   "name": "unvul-music-community",
-  "version": "1.0.0",
-  "description": "UNVUL MUSIC Community Upload",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js"
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    }
+  ],
+  "functions": {
+    "api/**/*.js": {
+      "maxDuration": 60,
+      "memory": 1024
+    }
   },
-  "dependencies": {
-    "ytdl-core": "^4.11.5",
-    "node-fetch": "^2.6.7"
+  "env": {
+    "NODE_ENV": "production"
   },
-  "engines": {
-    "node": ">=14.x"
+  "github": {
+    "silent": true
   }
 }
