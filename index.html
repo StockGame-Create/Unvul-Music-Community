@@ -844,33 +844,35 @@ async function downloadYoutubeAudio(youtubeUrl) {
             throw new Error('비디오 ID를 찾을 수 없습니다');
         }
 
-        // yt-api.org API 사용
-        const apiUrl = `https://yt-api.org/api/json/mp3/${videoId}`;
-        
-        const response = await fetch(apiUrl);
-        const data = await response.json();
+        // 서버를 통해 유튜브 다운로드
+        const response = await fetch(YOUTUBE_API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                videoId: videoId
+            })
+        });
 
-        if (!data || !data.url) {
-            throw new Error('다운로드 링크를 가져올 수 없습니다');
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || '다운로드 실패');
         }
 
-        // MP3 다운로드
-        const audioResponse = await fetch(data.url);
-        const audioBlob = await audioResponse.blob();
+        const data = await response.json();
+        
+        if (!data.base64) {
+            throw new Error('MP3 데이터를 받을 수 없습니다');
+        }
 
-        // 크기 체크
-        const sizeMB = audioBlob.size / (1024 * 1024);
+        // 크기 체크 (base64는 약 1.37배 크므로 역계산)
+        const sizeMB = (data.base64.length * 0.75) / (1024 * 1024);
         if (sizeMB > 4.4) {
             throw new Error(`파일이 너무 큽니다 (${sizeMB.toFixed(2)}MB). 더 짧은 영상을 선택해주세요.`);
         }
 
-        // Base64 변환
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result.split(',')[1]);
-            reader.onerror = reject;
-            reader.readAsDataURL(audioBlob);
-        });
+        return data.base64;
 
     } catch (error) {
         throw new Error('유튜브 다운로드 실패: ' + error.message);
