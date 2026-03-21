@@ -66,6 +66,7 @@
         }
         
         input[type="text"],
+        input[type="url"],
         input[type="file"],
         input[type="color"],
         select {
@@ -194,7 +195,6 @@
             display: none;
         }
 
-        /* 스타일 버튼 */
         .style-btn {
             padding: 12px 15px;
             background: rgba(255, 255, 255, 0.05);
@@ -218,7 +218,6 @@
             box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
         }
 
-        /* 체크박스 스타일링 */
         input[type="checkbox"] {
             width: 20px;
             height: 20px;
@@ -226,7 +225,6 @@
             accent-color: #667eea;
         }
 
-        /* 랜덤 버튼 */
         #randomizeBtn {
             padding: 10px 20px;
             background: rgba(255, 255, 255, 0.1);
@@ -243,7 +241,6 @@
             transform: scale(1.05);
         }
 
-        /* 돌아가기 버튼 */
         #backBtn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
@@ -253,7 +250,6 @@
             transform: translateY(0);
         }
 
-        /* 모바일 최적화 */
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
@@ -287,7 +283,6 @@
     <div class="container">
         <h1>🎵 UNVUL-MUSIC 커뮤니티 업로드</h1>
 
-        <!-- 돌아가기 버튼 -->
         <div style="text-align: center; margin-bottom: 20px;">
             <a href="https://unvul-music.vercel.app/" target="_blank" id="backBtn" style="
                 display: inline-block;
@@ -312,7 +307,9 @@
         
         <div class="info">
             <h3>📌 업로드 규칙</h3>
-            <p>• MP3 파일만 업로드 가능 (최대 4.5MB)</p>
+            <p>• MP3 파일 업로드 또는 유튜브 링크 사용 가능</p>
+            <p>• MP3 파일은 최대 4.5MB까지 가능합니다</p>
+            <p>• 유튜브 링크는 길이 제한 없이 업로드 가능합니다 🎬</p>
             <p>• 앨범 아트는 자동으로 생성됩니다</p>
             <p>• 업로드 후 자동으로 커뮤니티 탭에 표시됩니다</p>
             <p>• 사이트에 맞지 않은 노래를 업로드할 경우, 사이트에서 정지당할 수 있습니다</p>
@@ -325,53 +322,46 @@
                 <input type="text" id="songTitle" required placeholder="예: MY AWESOME SONG">
             </div>
             
-  <div class="form-group">
-    <label>업로드 방식 선택</label>
-    <div style="display: flex; gap: 15px; margin-bottom: 20px;">
-        <button type="button" class="style-btn active" id="uploadMethodFile">
-            📁 MP3 파일
-        </button>
-        <button type="button" class="style-btn" id="uploadMethodYoutube">
-            🎬 유튜브 링크
-        </button>
-    </div>
-</div>
+            <div class="form-group">
+                <label>업로드 방식 선택</label>
+                <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                    <button type="button" class="style-btn active" id="uploadMethodFile">
+                        📁 MP3 파일
+                    </button>
+                    <button type="button" class="style-btn" id="uploadMethodYoutube">
+                        🎬 유튜브 링크
+                    </button>
+                </div>
+            </div>
 
-<div class="form-group" id="fileUploadSection">
-    <label>MP3 파일 *</label>
-    <input type="file" id="mp3File" accept=".mp3">
-    <div class="file-info" id="mp3Info"></div>
-</div>
+            <div class="form-group" id="fileUploadSection">
+                <label>MP3 파일 *</label>
+                <input type="file" id="mp3File" accept=".mp3">
+                <div class="file-info" id="mp3Info"></div>
+            </div>
 
-<div class="form-group" id="youtubeUploadSection" style="display: none;">
-    <label>유튜브 링크 *</label>
-    <input type="url" id="youtubeUrl" placeholder="https://www.youtube.com/watch?v=...">
-    <div class="file-info" id="youtubeInfo"></div>
-</div>
+            <div class="form-group" id="youtubeUploadSection" style="display: none;">
+                <label>유튜브 링크 *</label>
+                <input type="url" id="youtubeUrl" placeholder="https://www.youtube.com/watch?v=...">
+                <div class="file-info" id="youtubeInfo"></div>
+                <div style="margin-top: 10px; padding: 12px; background: rgba(100,200,255,0.1); border: 1px solid rgba(100,200,255,0.3); border-radius: 8px; font-size: 0.9em; color: rgba(255,255,255,0.8);">
+                    💡 유튜브 링크는 MP3로 변환하지 않고 링크 그대로 저장됩니다. 길이 제한 없이 사용 가능합니다!
+                </div>
+            </div>
             
             <div class="form-group">
                 <label>앨범 아트 커스텀</label>
                 
-                <!-- 스타일 선택 -->
                 <div style="margin-bottom: 20px;">
                     <label style="font-size: 0.95em; margin-bottom: 10px;">디자인 스타일</label>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px;">
-                        <button type="button" class="style-btn active" data-style="gradient">
-                            🌈 그라데이션
-                        </button>
-                        <button type="button" class="style-btn" data-style="solid">
-                            🎨 단색
-                        </button>
-                        <button type="button" class="style-btn" data-style="pattern">
-                            🔷 패턴
-                        </button>
-                        <button type="button" class="style-btn" data-style="circle">
-                            ⭕ 원형
-                        </button>
+                        <button type="button" class="style-btn active" data-style="gradient">🌈 그라데이션</button>
+                        <button type="button" class="style-btn" data-style="solid">🎨 단색</button>
+                        <button type="button" class="style-btn" data-style="pattern">🔷 패턴</button>
+                        <button type="button" class="style-btn" data-style="circle">⭕ 원형</button>
                     </div>
                 </div>
                 
-                <!-- 색상 선택 -->
                 <div id="colorSection">
                     <div class="color-picker-group">
                         <div>
@@ -385,7 +375,6 @@
                     </div>
                 </div>
                 
-                <!-- 텍스트 옵션 -->
                 <div style="margin-top: 20px;">
                     <label style="font-size: 0.95em; margin-bottom: 10px;">텍스트 설정</label>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
@@ -410,7 +399,6 @@
                     </div>
                 </div>
                 
-                <!-- 효과 옵션 -->
                 <div style="margin-top: 20px;">
                     <label style="font-size: 0.95em; margin-bottom: 10px;">추가 효과</label>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
@@ -418,23 +406,20 @@
                             <input type="checkbox" id="addGlow" checked>
                             <span>★ 그림자</span>
                         </label>
-                  <label style="display: flex; align-items: center; gap: 8px; padding: 10px 15px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.2); border-radius: 8px; cursor: pointer; opacity: 0.5; pointer-events: none;">
-    <input type="checkbox" id="addNoise" disabled>
-    <span> 노이즈 (테스트중)</span>
-</label>
-<label style="display: flex; align-items: center; gap: 8px; padding: 10px 15px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.2); border-radius: 8px; cursor: pointer; opacity: 0.5; pointer-events: none;">
-    <input type="checkbox" id="addBorder" disabled>
-    <span> 테두리 (테스트중)</span>
-</label>
+                        <label style="display: flex; align-items: center; gap: 8px; padding: 10px 15px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.2); border-radius: 8px; cursor: pointer; opacity: 0.5; pointer-events: none;">
+                            <input type="checkbox" id="addNoise" disabled>
+                            <span>노이즈 (테스트중)</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; padding: 10px 15px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.2); border-radius: 8px; cursor: pointer; opacity: 0.5; pointer-events: none;">
+                            <input type="checkbox" id="addBorder" disabled>
+                            <span>테두리 (테스트중)</span>
+                        </label>
                     </div>
                 </div>
                 
-                <!-- 미리보기 -->
                 <div class="color-preview" id="colorPreview">🎵</div>
                 <div style="text-align: center; margin-top: 10px;">
-                    <button type="button" id="randomizeBtn">
-                        ? 랜덤 생성
-                    </button>
+                    <button type="button" id="randomizeBtn">? 랜덤 생성</button>
                 </div>
             </div>
             
@@ -460,54 +445,45 @@
     </div>
 
     <script>
-
- 
-let uploadMethod = 'file'; // 추가
-
-// 업로드 방식 전환
-document.getElementById('uploadMethodFile').addEventListener('click', function() {
-    uploadMethod = 'file';
-    document.getElementById('uploadMethodFile').classList.add('active');
-    document.getElementById('uploadMethodYoutube').classList.remove('active');
-    document.getElementById('fileUploadSection').style.display = 'block';
-    document.getElementById('youtubeUploadSection').style.display = 'none';
-    document.getElementById('mp3File').required = true;
-    document.getElementById('youtubeUrl').required = false;
-});
-
-document.getElementById('uploadMethodYoutube').addEventListener('click', function() {
-    uploadMethod = 'youtube';
-    document.getElementById('uploadMethodYoutube').classList.add('active');
-    document.getElementById('uploadMethodFile').classList.remove('active');
-    document.getElementById('fileUploadSection').style.display = 'none';
-    document.getElementById('youtubeUploadSection').style.display = 'block';
-    document.getElementById('mp3File').required = false;
-    document.getElementById('youtubeUrl').required = true;
-});
-
-// 유튜브 링크 검증
-document.getElementById('youtubeUrl').addEventListener('input', (e) => {
-    const url = e.target.value;
-    const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
-    
-    if (url && youtubeRegex.test(url)) {
-        document.getElementById('youtubeInfo').innerHTML = '✅ 유효한 유튜브 링크';
-        document.getElementById('youtubeInfo').style.color = 'rgba(100, 255, 100, 0.8)';
-    } else if (url) {
-        document.getElementById('youtubeInfo').innerHTML = '⚠️ 올바른 유튜브 링크를 입력하세요';
-        document.getElementById('youtubeInfo').style.color = 'rgba(255, 100, 100, 0.8)';
-    } else {
-        document.getElementById('youtubeInfo').innerHTML = '';
-    }
-});
-
-
-        // 개발자 도구 감지 및 차단
-      
-
-       const API_URL = 'https://unvulmus-community.vercel.app/api/upload';
-const YOUTUBE_API_URL = 'https://unvulmus-community.vercel.app/api/youtube'; 
+        let uploadMethod = 'file';
+        const API_URL = 'https://unvulmus-community.vercel.app/api/upload';
         let currentStyle = 'gradient';
+
+        // 업로드 방식 전환
+        document.getElementById('uploadMethodFile').addEventListener('click', function() {
+            uploadMethod = 'file';
+            document.getElementById('uploadMethodFile').classList.add('active');
+            document.getElementById('uploadMethodYoutube').classList.remove('active');
+            document.getElementById('fileUploadSection').style.display = 'block';
+            document.getElementById('youtubeUploadSection').style.display = 'none';
+            document.getElementById('mp3File').required = true;
+            document.getElementById('youtubeUrl').required = false;
+        });
+
+        document.getElementById('uploadMethodYoutube').addEventListener('click', function() {
+            uploadMethod = 'youtube';
+            document.getElementById('uploadMethodYoutube').classList.add('active');
+            document.getElementById('uploadMethodFile').classList.remove('active');
+            document.getElementById('fileUploadSection').style.display = 'none';
+            document.getElementById('youtubeUploadSection').style.display = 'block';
+            document.getElementById('mp3File').required = false;
+            document.getElementById('youtubeUrl').required = true;
+        });
+
+        // 유튜브 링크 검증
+        document.getElementById('youtubeUrl').addEventListener('input', (e) => {
+            const url = e.target.value;
+            const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+            if (url && youtubeRegex.test(url)) {
+                document.getElementById('youtubeInfo').innerHTML = '✅ 유효한 유튜브 링크';
+                document.getElementById('youtubeInfo').style.color = 'rgba(100, 255, 100, 0.8)';
+            } else if (url) {
+                document.getElementById('youtubeInfo').innerHTML = '⚠️ 올바른 유튜브 링크를 입력하세요';
+                document.getElementById('youtubeInfo').style.color = 'rgba(255, 100, 100, 0.8)';
+            } else {
+                document.getElementById('youtubeInfo').innerHTML = '';
+            }
+        });
 
         // 스타일 버튼 이벤트
         document.querySelectorAll('.style-btn').forEach(btn => {
@@ -515,57 +491,42 @@ const YOUTUBE_API_URL = 'https://unvulmus-community.vercel.app/api/youtube';
                 document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
                 currentStyle = this.dataset.style;
-                
                 const color2Container = document.getElementById('color2Container');
                 color2Container.style.display = currentStyle === 'solid' ? 'none' : 'block';
-                
                 updateColorPreview();
             });
         });
 
-        // 텍스트 타입 변경
         document.getElementById('textType').addEventListener('change', function() {
-            const customContainer = document.getElementById('customTextContainer');
-            customContainer.style.display = this.value === 'custom' ? 'block' : 'none';
+            document.getElementById('customTextContainer').style.display = this.value === 'custom' ? 'block' : 'none';
             updateColorPreview();
         });
 
-        // 텍스트 크기 슬라이더
         document.getElementById('textSize').addEventListener('input', function() {
             document.getElementById('textSizeValue').textContent = this.value;
             updateColorPreview();
         });
 
-        // 효과 체크박스
         ['addGlow', 'addNoise', 'addBorder'].forEach(id => {
             document.getElementById(id).addEventListener('change', updateColorPreview);
         });
 
-        // 커스텀 텍스트 입력
         document.getElementById('customText').addEventListener('input', updateColorPreview);
-
-        // 색상 변경
         document.getElementById('color1').addEventListener('input', updateColorPreview);
         document.getElementById('color2').addEventListener('input', updateColorPreview);
 
-        // 랜덤 생성
         document.getElementById('randomizeBtn').addEventListener('click', () => {
             const randomColor = () => '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
             document.getElementById('color1').value = randomColor();
             document.getElementById('color2').value = randomColor();
-            
             const styles = ['gradient', 'solid', 'pattern', 'circle'];
-            const randomStyleIndex = Math.floor(Math.random() * styles.length);
-            document.querySelectorAll('.style-btn')[randomStyleIndex].click();
-            
+            document.querySelectorAll('.style-btn')[Math.floor(Math.random() * styles.length)].click();
             const randomSize = Math.floor(Math.random() * 150) + 100;
             document.getElementById('textSize').value = randomSize;
             document.getElementById('textSizeValue').textContent = randomSize;
-            
             updateColorPreview();
         });
 
-        // 미리보기 업데이트
         function updateColorPreview() {
             const preview = document.getElementById('colorPreview');
             const color1 = document.getElementById('color1').value;
@@ -573,54 +534,30 @@ const YOUTUBE_API_URL = 'https://unvulmus-community.vercel.app/api/youtube';
             const textType = document.getElementById('textType').value;
             const customText = document.getElementById('customText').value;
             const songTitle = document.getElementById('songTitle').value || 'S';
-            
-            // 배경 스타일
             switch(currentStyle) {
-                case 'gradient':
-                    preview.style.background = `linear-gradient(135deg, ${color1}, ${color2})`;
-                    break;
-                case 'solid':
-                    preview.style.background = color1;
-                    break;
-                case 'pattern':
-                    preview.style.background = `repeating-linear-gradient(45deg, ${color1}, ${color1} 20px, ${color2} 20px, ${color2} 40px)`;
-                    break;
-                case 'circle':
-                    preview.style.background = `radial-gradient(circle, ${color1}, ${color2})`;
-                    break;
+                case 'gradient': preview.style.background = `linear-gradient(135deg, ${color1}, ${color2})`; break;
+                case 'solid': preview.style.background = color1; break;
+                case 'pattern': preview.style.background = `repeating-linear-gradient(45deg, ${color1}, ${color1} 20px, ${color2} 20px, ${color2} 40px)`; break;
+                case 'circle': preview.style.background = `radial-gradient(circle, ${color1}, ${color2})`; break;
             }
-            
-            // 텍스트
             let displayText = '';
             switch(textType) {
-                case 'first':
-                    displayText = songTitle.charAt(0).toUpperCase();
-                    break;
-                case 'icon':
-                    displayText = '🎵';
-                    break;
-                case 'custom':
-                    displayText = customText || '♪';
-                    break;
+                case 'first': displayText = songTitle.charAt(0).toUpperCase(); break;
+                case 'icon': displayText = '🎵'; break;
+                case 'custom': displayText = customText || '♪'; break;
             }
             preview.textContent = displayText;
-            
-            // 효과
             const addGlow = document.getElementById('addGlow').checked;
             const addBorder = document.getElementById('addBorder').checked;
-            
             preview.style.textShadow = addGlow ? '0 0 30px rgba(0,0,0,0.5), 0 0 60px rgba(0,0,0,0.3)' : 'none';
-            preview.style.border = addBorder ? '5px solid rgba(255, 255, 255, 0.3)' : '3px solid rgba(255, 255, 255, 0.3)';
+            preview.style.border = addBorder ? '5px solid rgba(255,255,255,0.3)' : '3px solid rgba(255,255,255,0.3)';
         }
 
-        // 파일 정보 표시
-    // 파일 정보 표시
         document.getElementById('mp3File').addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
                 const sizeMB = (file.size / 1024 / 1024).toFixed(2);
                 document.getElementById('mp3Info').textContent = `📁 ${file.name} (${sizeMB}MB)`;
-                
                 if (file.size > 4.4 * 1024 * 1024) {
                     alert('⚠️ 파일이 너무 큽니다!\n4.5MB 이하 파일을 선택해주세요.\n(약 4분까지 가능합니다)');
                     e.target.value = '';
@@ -629,22 +566,18 @@ const YOUTUBE_API_URL = 'https://unvulmus-community.vercel.app/api/youtube';
             }
         });
 
-        // 개선된 앨범 아트 생성
         async function generateAlbumArt(color1, color2, title) {
             return new Promise((resolve) => {
                 const canvas = document.createElement('canvas');
                 canvas.width = 500;
                 canvas.height = 500;
                 const ctx = canvas.getContext('2d');
-                
                 const textType = document.getElementById('textType').value;
                 const customText = document.getElementById('customText').value;
                 const textSize = parseInt(document.getElementById('textSize').value);
                 const addGlow = document.getElementById('addGlow').checked;
                 const addNoise = document.getElementById('addNoise').checked;
                 const addBorder = document.getElementById('addBorder').checked;
-                
-                // 배경 그리기
                 switch(currentStyle) {
                     case 'gradient':
                         const gradient = ctx.createLinearGradient(0, 0, 500, 500);
@@ -667,8 +600,7 @@ const YOUTUBE_API_URL = 'https://unvulmus-community.vercel.app/api/youtube';
                         pCtx.fillStyle = color2;
                         pCtx.fillRect(0, 0, 20, 20);
                         pCtx.fillRect(20, 20, 20, 20);
-                        const pattern = ctx.createPattern(patternCanvas, 'repeat');
-                        ctx.fillStyle = pattern;
+                        ctx.fillStyle = ctx.createPattern(patternCanvas, 'repeat');
                         ctx.fillRect(0, 0, 500, 500);
                         break;
                     case 'circle':
@@ -679,21 +611,14 @@ const YOUTUBE_API_URL = 'https://unvulmus-community.vercel.app/api/youtube';
                         ctx.fillRect(0, 0, 500, 500);
                         break;
                 }
-                
-                // 장식 원들
                 if (currentStyle !== 'pattern') {
                     for (let i = 0; i < 12; i++) {
                         ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.1})`;
-                        const x = Math.random() * 500;
-                        const y = Math.random() * 500;
-                        const r = Math.random() * 100 + 50;
                         ctx.beginPath();
-                        ctx.arc(x, y, r, 0, Math.PI * 2);
+                        ctx.arc(Math.random() * 500, Math.random() * 500, Math.random() * 100 + 50, 0, Math.PI * 2);
                         ctx.fill();
                     }
                 }
-                
-                // 노이즈 효과
                 if (addNoise) {
                     const imageData = ctx.getImageData(0, 0, 500, 500);
                     for (let i = 0; i < imageData.data.length; i += 4) {
@@ -704,220 +629,160 @@ const YOUTUBE_API_URL = 'https://unvulmus-community.vercel.app/api/youtube';
                     }
                     ctx.putImageData(imageData, 0, 0);
                 }
-                
-                // 텍스트
                 if (textType !== 'none') {
                     let displayText = '';
                     switch(textType) {
-                        case 'first':
-                            displayText = title.charAt(0).toUpperCase();
-                            break;
-                        case 'icon':
-                            displayText = '🎵';
-                            break;
-                        case 'custom':
-                            displayText = customText || '♪';
-                            break;
+                        case 'first': displayText = title.charAt(0).toUpperCase(); break;
+                        case 'icon': displayText = '🎵'; break;
+                        case 'custom': displayText = customText || '♪'; break;
                     }
-                    
                     ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
                     ctx.font = `bold ${textSize}px Arial`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    
-                    if (addGlow) {
-                        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-                        ctx.shadowBlur = 30;
-                    }
-                    
+                    if (addGlow) { ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 30; }
                     ctx.fillText(displayText, 250, 250);
                 }
-                
-                // 테두리
                 if (addBorder) {
-                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
-                ctx.lineWidth = 10;
-                ctx.strokeRect(5, 5, 490, 490);
+                    ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+                    ctx.lineWidth = 10;
+                    ctx.strokeRect(5, 5, 490, 490);
+                }
+                canvas.toBlob((blob) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result.split(',')[1]);
+                    reader.readAsDataURL(blob);
+                }, 'image/jpeg', 0.95);
+            });
+        }
+
+        // 폼 제출
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const title = document.getElementById('songTitle').value.trim();
+            const color1 = document.getElementById('color1').value;
+            const color2 = document.getElementById('color2').value;
+
+            document.getElementById('uploadBtn').disabled = true;
+            document.getElementById('progressDiv').style.display = 'block';
+            document.getElementById('successDiv').style.display = 'none';
+            document.getElementById('errorDiv').style.display = 'none';
+
+            try {
+                // ===== 유튜브 링크 방식 =====
+                if (uploadMethod === 'youtube') {
+                    const youtubeUrl = document.getElementById('youtubeUrl').value.trim();
+                    const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+
+                    if (!youtubeRegex.test(youtubeUrl)) {
+                        alert('⚠️ 올바른 유튜브 링크를 입력해주세요!');
+                        document.getElementById('uploadBtn').disabled = false;
+                        return;
+                    }
+
+                    updateProgress(30, '앨범 아트 생성 중...');
+                    const albumArtBase64 = await generateAlbumArt(color1, color2, title);
+
+                    updateProgress(60, '업로드 중...');
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            youtubeUrl: youtubeUrl,
+                            title: title,
+                            iconBase64: albumArtBase64
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const err = await response.json();
+                        throw new Error(err.error || '업로드 실패');
+                    }
+
+                    updateProgress(100, '완료!');
+                    document.getElementById('successDiv').style.display = 'block';
+                    document.getElementById('successMessage').innerHTML = `
+                        <strong>${title}</strong>가 커뮤니티에 추가되었습니다!<br><br>
+                        ✅ 자동으로 커뮤니티 탭에 표시됩니다<br>
+                        ✅ 유튜브 링크로 바로 재생됩니다
+                    `;
+
+                // ===== MP3 파일 방식 (기존) =====
+                } else {
+                    const mp3File = document.getElementById('mp3File').files[0];
+                    if (!mp3File) {
+                        alert('⚠️ MP3 파일을 선택해주세요!');
+                        document.getElementById('uploadBtn').disabled = false;
+                        return;
+                    }
+
+                    updateProgress(20, '앨범 아트 생성 중...');
+                    const albumArtBase64 = await generateAlbumArt(color1, color2, title);
+
+                    updateProgress(40, 'MP3 파일 처리 중...');
+                    let mp3Base64Content = await fileToBase64(mp3File);
+                    mp3Base64Content = mp3Base64Content.split(',')[1];
+
+                    updateProgress(60, 'MP3 파일 업로드 중...');
+                    await uploadToGitHub(`community/${title}.mp3`, mp3Base64Content);
+
+                    updateProgress(80, '앨범 아트 업로드 중...');
+                    await uploadToGitHub(`community/${title}.jpg`, albumArtBase64);
+
+                    updateProgress(100, '완료!');
+                    document.getElementById('successDiv').style.display = 'block';
+                    document.getElementById('successMessage').innerHTML = `
+                        <strong>${title}</strong>가 커뮤니티에 추가되었습니다!<br><br>
+                        ✅ 자동으로 커뮤니티 탭에 표시됩니다<br>
+                        ✅ 추가 작업이 필요하지 않습니다
+                    `;
+                }
+
+                setTimeout(() => {
+                    document.getElementById('uploadForm').reset();
+                    document.getElementById('mp3Info').textContent = '';
+                    updateColorPreview();
+                }, 3000);
+
+            } catch (error) {
+                console.error('Upload error:', error);
+                document.getElementById('errorDiv').style.display = 'block';
+                document.getElementById('errorMessage').textContent = error.message;
+            } finally {
+                document.getElementById('uploadBtn').disabled = false;
             }
-            
-            canvas.toBlob((blob) => {
+        });
+
+        function updateProgress(percent, message) {
+            document.getElementById('progressFill').style.width = percent + '%';
+            document.getElementById('progressFill').textContent = percent + '%';
+            document.getElementById('statusText').textContent = message;
+        }
+
+        async function uploadToGitHub(filename, base64Content) {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filename, content: base64Content })
+            });
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(`업로드 실패: ${error.error || error.message}`);
+            }
+            return await response.json();
+        }
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
                 const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result.split(',')[1]);
-                reader.readAsDataURL(blob);
-            }, 'image/jpeg', 0.95);
-        });
-    }
-
-    // 폼 제출
-    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-const title = document.getElementById('songTitle').value.trim();
-
-// 업로드 방식에 따라 분기
-let mp3Base64Content;
-
-if (uploadMethod === 'file') {
-    const mp3File = document.getElementById('mp3File').files[0];
-    if (!mp3File) {
-        alert('⚠️ MP3 파일을 선택해주세요!');
-        document.getElementById('uploadBtn').disabled = false;
-        return;
-    }
-    updateProgress(40, 'MP3 파일 처리 중...');
-    mp3Base64Content = await fileToBase64(mp3File);
-    mp3Base64Content = mp3Base64Content.split(',')[1];
-    
-} else {
-    const youtubeUrl = document.getElementById('youtubeUrl').value.trim();
-    const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
-    
-    if (!youtubeRegex.test(youtubeUrl)) {
-        alert('⚠️ 올바른 유튜브 링크를 입력해주세요!');
-        document.getElementById('uploadBtn').disabled = false;
-        return;
-    }
-    
-    updateProgress(40, '유튜브에서 음악 다운로드 중...');
-    mp3Base64Content = await downloadYoutubeAudio(youtubeUrl);
-}
-        const color1 = document.getElementById('color1').value;
-        const color2 = document.getElementById('color2').value;
-
-        document.getElementById('uploadBtn').disabled = true;
-        document.getElementById('progressDiv').style.display = 'block';
-        document.getElementById('successDiv').style.display = 'none';
-        document.getElementById('errorDiv').style.display = 'none';
-
-        try {
-            updateProgress(20, '앨범 아트 생성 중...');
-            const albumArtBase64 = await generateAlbumArt(color1, color2, title);
-            
-      updateProgress(60, 'MP3 파일 업로드 중...');
-const mp3Filename = `community/${title}.mp3`;
-await uploadBase64(mp3Base64Content, mp3Filename);
-
-            updateProgress(70, '앨범 아트 업로드 중...');
-            const iconFilename = `community/${title}.jpg`;
-            await uploadBase64(albumArtBase64, iconFilename);
-
-            updateProgress(100, '완료!');
-            document.getElementById('successDiv').style.display = 'block';
-            document.getElementById('successMessage').innerHTML = `
-                <strong>${title}</strong>가 커뮤니티에 추가되었습니다!<br><br>
-                ✅ 자동으로 커뮤니티 탭에 표시됩니다<br>
-                ✅ 추가 작업이 필요하지 않습니다
-            `;
-
-            setTimeout(() => {
-                document.getElementById('uploadForm').reset();
-                document.getElementById('mp3Info').textContent = '';
-                updateColorPreview();
-            }, 3000);
-
-        } catch (error) {
-            console.error('Upload error:', error);
-            document.getElementById('errorDiv').style.display = 'block';
-            document.getElementById('errorMessage').textContent = error.message;
-        } finally {
-            document.getElementById('uploadBtn').disabled = false;
-        }
-    });
-
-    function updateProgress(percent, message) {
-        document.getElementById('progressFill').style.width = percent + '%';
-        document.getElementById('progressFill').textContent = percent + '%';
-        document.getElementById('statusText').textContent = message;
-    }
-async function downloadYoutubeAudio(youtubeUrl) {
-    try {
-        // 유튜브 비디오 ID 추출
-        let videoId;
-        const urlObj = new URL(youtubeUrl);
-        if (urlObj.hostname.includes('youtu.be')) {
-            videoId = urlObj.pathname.slice(1);
-        } else if (urlObj.hostname.includes('youtube.com')) {
-            videoId = urlObj.searchParams.get('v');
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
         }
 
-        if (!videoId) {
-            throw new Error('비디오 ID를 찾을 수 없습니다');
-        }
-
-        // 서버를 통해 유튜브 다운로드
-        const response = await fetch(YOUTUBE_API_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                videoId: videoId
-            })
-        });
-
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error || '다운로드 실패');
-        }
-
-        const data = await response.json();
-        
-        if (!data.base64) {
-            throw new Error('MP3 데이터를 받을 수 없습니다');
-        }
-
-        // 크기 체크 (base64는 약 1.37배 크므로 역계산)
-        const sizeMB = (data.base64.length * 0.75) / (1024 * 1024);
-        if (sizeMB > 4.4) {
-            throw new Error(`파일이 너무 큽니다 (${sizeMB.toFixed(2)}MB). 더 짧은 영상을 선택해주세요.`);
-        }
-
-        return data.base64;
-
-    } catch (error) {
-        throw new Error('유튜브 다운로드 실패: ' + error.message);
-    }
-}
-    async function uploadFile(file, filename) {
-        const base64 = await fileToBase64(file);
-        return await uploadToGitHub(filename, base64.split(',')[1]);
-    }
-
-    async function uploadBase64(base64, filename) {
-        return await uploadToGitHub(filename, base64);
-    }
-
-    async function uploadToGitHub(filename, base64Content) {
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                filename: filename,
-                content: base64Content
-            })
-        });
-
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(`업로드 실패: ${error.error || error.message}`);
-        }
-
-        return await response.json();
-    }
-
-    function fileToBase64(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-        });
-    }
-
-    // 초기화
-    updateColorPreview();
-</script>
+        updateColorPreview();
+    </script>
 </body>
 </html>
