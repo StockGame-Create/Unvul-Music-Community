@@ -1,85 +1,40 @@
-import fetch from 'node-fetch';
+import { Innertube } from 'youtubei.js';
 
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     if (req.method === 'OPTIONS') return res.status(200).end();
-    if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-    const { filename, content, youtubeUrl, title, iconBase64 } = req.body;
+    const { youtubeUrl } = req.body;
 
-    if (youtubeUrl) {
-        try {
-            const getRes = await fetch(
-                `https://api.github.com/repos/StockGame-Create/Unvul-Music/contents/community/songs.json`,
-                { headers: { 'Authorization': `Bearer ${process.env.GITHUB_TOKEN}` } }
-            );
+    try {
+        const yt = await Innertube.create();
+        
+        // 비디오 ID 추출
+        const videoId = youtubeUrl.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=)([^&\s]+)/)?.[1];
+        if (!videoId) throw new Error('비디오 ID를 찾을 수 없습니다');
 
-            let songs = [];
-            let sha = null;
-            if (getRes.ok) {
-                const existing = await getRes.json();
-                sha = existing.sha;
-                songs = JSON.parse(Buffer.from(existing.content, 'base64').toString());
-            }
+        const info = await yt.getStreamingData(videoId, {
+            client: 'ANDROID'
+        });
 
-            songs.push({ title, youtubeUrl });
+        // 오디오만 있는 포맷 찾기
+        const audioFormats = info.adaptive_formats.filter(f => 
+            f.has_audio && !f.has_video
+        );
 
-            await fetch(
-                `https://api.github.com/repos/StockGame-Create/Unvul-Music/contents/community/songs.json`,
-                {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        message: `Add song: ${title}`,
-                        content: Buffer.from(JSON.stringify(songs, null, 2)).toString('base64'),
-                        ...(sha && { sha })
-                    })
-                }
-            );
+        if (!audioFormats.length) throw new Error('오디오 포맷 없음');
 
-            if (iconBase64) {
-                await fetch(
-                    `https://api.github.com/repos/StockGame-Create/Unvul-Music/contents/community/${title}.jpg`,
-                    {
-                        method: 'PUT',
-                        headers: {
-                            'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            message: `Add icon: ${title}`,
-                            content: iconBase64
-                        })
-                    }
-                );
-            }
+        // 최고 품질 선택
+        const best = audioFormats.sort((a, b) => 
+            (b.bitrate || 0) - (a.bitrate || 0)
+        )[0];
 
-            return res.status(200).json({ success: true });
-        } catch (err) {
-            return res.status(500).json({ error: err.message });
-        }
+        return res.status(200).json({ streamUrl: best.decipher(yt.session.player) });
+
+    } catch (err) {
+        console.error('오류:', err.message);
+        return res.status(500).json({ error: err.message });
     }
-
-    // 기존 MP3 방식
-    const response = await fetch(
-        `https://api.github.com/repos/StockGame-Create/Unvul-Music/contents/${filename}`,
-        {
-            method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                message: `Upload ${filename}`,
-                content: content
-            })
-        }
-    );
-    const data = await response.json();
-    return res.status(response.status).json(data);
 }
