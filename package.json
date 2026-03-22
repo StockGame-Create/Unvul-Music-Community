@@ -3,8 +3,6 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
-    "youtubei.js": "latest",
-    "youtube-po-token-generator": "latest",
     "node-fetch": "^3.0.0"
   },
   "engines": {
