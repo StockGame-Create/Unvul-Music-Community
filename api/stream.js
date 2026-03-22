@@ -1,6 +1,4 @@
-import { YtdlCore } from '@ybd-project/ytdl-core/serverless';
-
-const ytdl = new YtdlCore({});
+import { Innertube } from 'youtubei.js';
 
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -9,30 +7,20 @@ export default async function handler(req, res) {
     if (req.method === 'OPTIONS') return res.status(200).end();
 
     const { youtubeUrl } = req.body;
-    console.log('받은 URL:', youtubeUrl);
 
     try {
-        const info = await ytdl.getBasicInfo(youtubeUrl);
-        console.log('전체 포맷 수:', info.formats?.length);
-        console.log('포맷 샘플:', JSON.stringify(info.formats?.[0]));
+        const yt = await Innertube.create();
+        const videoId = youtubeUrl.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=)([^&\s]+)/)?.[1];
+        if (!videoId) throw new Error('비디오 ID를 찾을 수 없습니다');
 
-        // 필터 조건 완화 - url만 있으면 됨
-        const formats = info.formats.filter(f => f.url);
-        console.log('url 있는 포맷 수:', formats.length);
+        const info = await yt.getStreamingData(videoId, { client: 'ANDROID' });
+        const audioFormats = info.adaptive_formats.filter(f => f.has_audio && !f.has_video);
+        if (!audioFormats.length) throw new Error('오디오 포맷 없음');
 
-        // 오디오만 있는 포맷 우선, 없으면 전체에서 선택
-        const audioOnly = formats.filter(f => f.mimeType?.includes('audio'));
-        const target = audioOnly.length > 0 ? audioOnly : formats;
-
-        const best = target.sort((a, b) => (b.audioBitrate || 0) - (a.audioBitrate || 0))[0];
-
-        if (!best) throw new Error('재생 가능한 포맷 없음');
-
-        console.log('선택된 포맷:', best.mimeType, best.audioBitrate);
-        return res.status(200).json({ streamUrl: best.url });
-
+        const best = audioFormats.sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0))[0];
+        return res.status(200).json({ streamUrl: best.decipher(yt.session.player) });
     } catch (err) {
-        console.error('상세 오류:', err.message);
+        console.error('오류:', err.message);
         return res.status(500).json({ error: err.message });
     }
 }
