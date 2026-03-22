@@ -1,6 +1,3 @@
-import { Innertube } from 'youtubei.js';
-import { generate } from 'youtube-po-token-generator';
-
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -13,29 +10,36 @@ export default async function handler(req, res) {
         const videoId = youtubeUrl.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=)([^&\s]+)/)?.[1];
         if (!videoId) throw new Error('비디오 ID를 찾을 수 없습니다');
 
-        // poToken 자동 생성
-        console.log('poToken 생성 중...');
-        const { visitorData, poToken } = await generate();
-        console.log('poToken 생성 완료');
+        // Piped 공개 인스턴스 여러개 시도
+        const instances = [
+            'https://pipedapi.kavin.rocks',
+            'https://piped-api.garudalinux.org',
+            'https://api.piped.projectsegfau.lt'
+        ];
 
-        const yt = await Innertube.create({
-            visitor_data: visitorData,
-            po_token: poToken
-        });
+        let streamUrl = null;
 
-        const info = await yt.getInfo(videoId);
-        const audioFormats = info.streaming_data?.adaptive_formats?.filter(f =>
-            f.has_audio && !f.has_video
-        ) || [];
+        for (const instance of instances) {
+            try {
+                const r = await fetch(`${instance}/streams/${videoId}`);
+                if (!r.ok) continue;
+                const data = await r.json();
+                const audio = data.audioStreams
+                    ?.filter(s => !s.videoOnly)
+                    ?.sort((a, b) => b.bitrate - a.bitrate)?.[0];
+                if (audio?.url) {
+                    streamUrl = audio.url;
+                    break;
+                }
+            } catch (e) {
+                continue;
+            }
+        }
 
-        if (!audioFormats.length) throw new Error('오디오 포맷 없음');
-
-        const best = audioFormats.sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0))[0];
-        const streamUrl = best.decipher(yt.session.player);
-
+        if (!streamUrl) throw new Error('스트림 URL을 찾을 수 없습니다');
         return res.status(200).json({ streamUrl });
+
     } catch (err) {
-        console.error('오류:', err.message);
         return res.status(500).json({ error: err.message });
     }
 }
