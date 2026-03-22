@@ -1,4 +1,4 @@
-import ytdl from 'ytdl-core';
+import fetch from 'node-fetch';
 
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -9,19 +9,8 @@ export default async function handler(req, res) {
 
     const { filename, content, youtubeUrl, title, iconBase64 } = req.body;
 
-    // 유튜브 방식
     if (youtubeUrl) {
         try {
-            // ytdl-core로 오디오 스트림 URL 추출
-            const info = await ytdl.getInfo(youtubeUrl);
-            const audioFormat = ytdl.chooseFormat(info.formats, { 
-                quality: 'highestaudio',
-                filter: 'audioonly'
-            });
-            
-            const streamUrl = audioFormat.url; // 직접 재생 가능한 URL
-
-            // songs.json 업데이트
             const getRes = await fetch(
                 `https://api.github.com/repos/StockGame-Create/Unvul-Music/contents/community/songs.json`,
                 { headers: { 'Authorization': `Bearer ${process.env.GITHUB_TOKEN}` } }
@@ -32,14 +21,10 @@ export default async function handler(req, res) {
             if (getRes.ok) {
                 const existing = await getRes.json();
                 sha = existing.sha;
-                songs = JSON.parse(atob(existing.content.replace(/\n/g, '')));
+                songs = JSON.parse(Buffer.from(existing.content, 'base64').toString());
             }
 
-            songs.push({
-                title,
-                src: streamUrl,  // 직접 재생 가능한 URL 저장
-                icon: iconBase64 ? true : false
-            });
+            songs.push({ title, youtubeUrl });
 
             await fetch(
                 `https://api.github.com/repos/StockGame-Create/Unvul-Music/contents/community/songs.json`,
@@ -51,13 +36,12 @@ export default async function handler(req, res) {
                     },
                     body: JSON.stringify({
                         message: `Add song: ${title}`,
-                        content: btoa(unescape(encodeURIComponent(JSON.stringify(songs, null, 2)))),
+                        content: Buffer.from(JSON.stringify(songs, null, 2)).toString('base64'),
                         ...(sha && { sha })
                     })
                 }
             );
 
-            // 앨범 아트 저장
             if (iconBase64) {
                 await fetch(
                     `https://api.github.com/repos/StockGame-Create/Unvul-Music/contents/community/${title}.jpg`,
@@ -76,7 +60,6 @@ export default async function handler(req, res) {
             }
 
             return res.status(200).json({ success: true });
-
         } catch (err) {
             return res.status(500).json({ error: err.message });
         }
