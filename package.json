@@ -1,0 +1,11 @@
+{
+  "name": "unvul-music-community",
+  "version": "1.0.0",
+  "dependencies": {
+    "@ybd-project/ytdl-core": "latest",
+    "node-fetch": "^2.6.7"
+  },
+  "engines": {
+    "node": ">=18.x"
+  }
+}
