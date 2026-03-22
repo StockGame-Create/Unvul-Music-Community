@@ -4,7 +4,8 @@
   "type": "module",
   "dependencies": {
     "youtubei.js": "latest",
-    "node-fetch": "^2.6.7"
+    "youtube-po-token-generator": "latest",
+    "node-fetch": "^3.0.0"
   },
   "engines": {
     "node": ">=18.x"
